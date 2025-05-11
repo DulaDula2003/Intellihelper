@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta for Responsive Design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS Import -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
+    <!-- Fav_Icon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/Intelli_Logo.png') }}">
+    <!-- Loader CSS and JS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+    <script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
+    <!-- Fonts Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+    <title>IntelliHelper News</title>
+</head>
+
+<body>
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+
+    <div id="loader" class="loader">
+        <img src="{{ url_for('static', filename='images/Giffy-Loader.gif') }}" alt="Loading..." class="loader-gif">
+    </div>
+
+    <div class="navbar">
+        <a href="{{ url_for('news.index') }}">Discover</a>
+        <a href="/category/news">News</a>
+        <a href="/category/sports">Sports</a>
+        <a href="/category/money">Money</a>
+        <a href="/category/weather">Weather</a>
+        <a href="/category/health">Health</a>
+        <a href="/category/travel">Travel</a>
+        <a href="{{ url_for('about.Home') }}">Home</a>
+    </div>
+    <h1>IntelliHelper News Search</h1>
+    <form method="GET" action="{{ url_for('news.index') }}">
+        <input type="text" name="query" placeholder="Search for news..." required autocomplete="off">
+        <button type="submit">Search</button>
+    </form>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Related News</h3>
+            <ul>
+                {% for result in results[:5] %}
+                <li>
+                    <img src="{{ result.image_url if result.image_url else url_for('static', filename='images/Intelli_Logo.png') }}"
+                        alt="Related News Image" onerror="this.src=fallbackImage">
+                    <a href="{{ result['url'] }}" target="_blank">{{ result['name'] | safe }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="cards-section">
+            {% for result in results %}
+            <div class="card">
+                <img src="{{ result.image_url if result.image_url else url_for('static', filename='images/default-image.png') }} "
+                    alt="News Image" onerror="this.src=fallbackImage">
+                <div class="card-content">
+                    <p class="meta">
+                        <a href="{{ result['url'] }}" target="_blank">{{ result['name'] | safe }}</a>
+                    </p>
+                    <h3>{{ result['description'] | safe }}</h3>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        const fallbackImage = "{{ url_for('static', filename='images/Intelli_Logo.png') }}";
+    </script>
+
+</body>
+
+</html>

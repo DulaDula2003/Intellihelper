@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/Intelli_Logo.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Abel:wght@400&display=swap" rel="stylesheet">
+    <title>Signup - IntelliHelper</title>
+    <style>
+        /* Reset and Body Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Abel', sans-serif;
+            background-image: url("{{ url_for('static', filename='images/Background_Design.png') }}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Container Styling with Glassmorphism Effect */
+        .container {
+            max-width: 750px;
+            width: 90%;
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 26px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        /* Form Styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+        }
+
+        .input-group {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #337ab7;
+            outline: none;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            grid-column: span 2;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px 0;
+            width: 100%;
+            font-size: 16px;
+            background: #337ab7;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #passwordError {
+            grid-column: span 2;
+            color: #ff4d4d;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Custom Scrollbar */
+        body::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #f1f8f7;
+            border-radius: 8px;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #337ab7;
+            border-radius: 8px;
+            border: 2px solid #f1f8f7;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 20px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            input, select {
+                font-size: 14px;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Signup for IntelliHelper</h2>
+        <form id="signupForm" method="POST">
+            {{ form.hidden_tag() }}
+
+            <!-- Name and Username -->
+            <div class="input-group">
+                <label>{{ form.name.label }}</label>
+                {{ form.name(autocomplete="off", placeholder="Full Name") }}
+            </div>
+            <div class="input-group">
+                <label>{{ form.username.label }}</label>
+                {{ form.username(autocomplete="off", placeholder="Username") }}
+            </div>
+
+            <!-- Email (Full Width) -->
+            <div class="input-group full-width">
+                <label>{{ form.email.label }}</label>
+                {{ form.email(placeholder="Email") }}
+            </div>
+
+            <!-- DOB and Gender -->
+            <div class="input-group">
+                <label>{{ form.dob.label }}</label>
+                {{ form.dob(type="date") }}
+            </div>
+            <div class="input-group">
+                <label>{{ form.gender.label }}</label>
+                {{ form.gender() }}
+            </div>
+
+            <!-- Password and Confirm Password -->
+            <div class="input-group">
+                <label>{{ form.password.label }}</label>
+                {{ form.password(placeholder="Password") }}
+            </div>
+            <div class="input-group">
+                <label>{{ form.confirm_password.label }}</label>
+                {{ form.confirm_password(placeholder="Confirm Password") }}
+                <div id="passwordError">Passwords do not match!</div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-btn">
+                {{ form.submit(class="submit-btn") }}
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const confirmPasswordInput = document.querySelector('input[name="confirm_password"]');
+            const passwordError = document.getElementById('passwordError');
+
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                event.preventDefault();
+                passwordError.style.display = 'block';
+            } else {
+                passwordError.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta for Responsive Design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Fav Icon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/Intelli_Logo.png') }}">
+	<!-- CSS Import -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+    <!-- Chat and Loader CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+	<script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
+    <!-- Fonts Import -->
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+    <title>Medical Chatbot</title>
+
+</head>
+
+<body>
+
+    <div id="loader" class="loader">
+        <img src="{{ url_for('static', filename='images/Giffy-Loader.gif') }}" alt="Loading..." class="loader-gif">
+    </div>
+
+    <div id="loader" class="loader">
+        <img src="{{ url_for('static', filename='images/Giffy-Loader.gif') }}" alt="Loading..." class="loader-gif">
+    </div>
+
+    <div class="navBar">
+        <div class="logo">
+            IntelliHelper
+        </div>
+        <div class="nav_links">
+            <ul>
+                <li><a href="{{ url_for('about.Home') }}">Home</a></li>
+                <li><a href="{{ url_for('about.about') }}">About Us</a></li>
+                <li>
+                    <button onclick="toggleMenu()">Tabs</button>
+                    <div class="dropdown-menu" style="display: none;">
+                        <ul>
+                            <li><a href="{{ url_for('ats.index') }}">Resume Checker</a></li>
+                            <li><a href="{{ url_for('todo_app.index') }}">To-Do List</a></li>
+                            <li><a href="{{ url_for('news.index') }}">News</a></li>
+                            <li><a href="{{ url_for('text.index') }}">News Summary</a></li>
+                            <li><a href="{{ url_for('notes_app.all_notes') }}">Notes</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="joining">
+            {% if session.user %}
+                <a href="{{ url_for('profile.profile') }}">
+                    {% if display_data.profile_pic %}
+                        <img src="data:image/png;base64,{{ display_data.profile_pic }}" alt="IH" class="profile-pic" />
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/dummy_profile_pic.png') }}" alt="IH" class="profile-pic" />
+                    {% endif %}
+                </a>
+            {% else %}
+                <div class="l_btn"><a href="{{ url_for('auth.login') }}">Login</a></div>
+                <div class="s_btn"><a href="{{ url_for('auth.signup') }}">SignUp</a></div>
+            {% endif %}
+        </div>
+        
+    </div>
+
+    <div class="separator"></div>
+    
+    <div class="container">
+        <div class="chatbox">
+            <div class="chat-header">
+                <img src="{{ url_for('static', filename='images/Bot.jpg') }}" alt="Bot Image">
+                <div class="user_info">
+                    <span>Medical Chatbot</span>
+                    <p>Ask me anything!</p>
+                </div>
+            </div>
+
+            <div id="messageArea" class="message-area"></div>
+
+            <div class="chat-footer">
+                <form id="chatForm">
+                    <input type="text" id="text" placeholder="Type your message..." autocomplete="off" required>
+                    <button type="submit"><i class="fas fa-location-arrow"></i> Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        function toggleMenu() {
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            // Toggle display of the dropdown menu
+            if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                dropdownMenu.style.display = 'block';
+            } else {
+                dropdownMenu.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            const toggleButton = document.querySelector('button[onclick="toggleMenu()"]');
+
+            // Check if the click is outside the dropdown and the button
+            if (!dropdownMenu.contains(event.target) && !toggleButton.contains(event.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        $(document).ready(function() {
+            $("#chatForm").on("submit", function(event) {
+                event.preventDefault();
+
+                const date = new Date();
+                const time = `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+                const userInput = $("#text").val();
+
+                const userMessage = `
+                    <div class="msg-container user">
+                        <div class="message">${userInput}</div>
+                        <div class="msg-time">${time}</div>
+                    </div>
+                `;
+
+                $("#messageArea").append(userMessage);
+                $("#text").val("");
+
+                $.ajax({
+                    data: { msg: userInput },
+                    type: "POST",
+                    url: "/get",
+                }).done(function(response) {
+                    const botMessage = `
+                        <div class="msg-container bot">
+                            <div class="message">${response}</div>
+                            <div class="msg-time">${time}</div>
+                        </div>
+                    `;
+                    $("#messageArea").append(botMessage);
+                    $("#messageArea").scrollTop($("#messageArea")[0].scrollHeight);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

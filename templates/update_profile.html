@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta for Responsive Design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Fav Icon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/Intelli_Logo.png') }}">
+    <!-- CSS Import -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/summarize.css') }}">
+    <!-- Loader CSS and JS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+    <script src="{{ url_for('static', filename='js/loader.js') }}" defer></script>
+    <!-- Fonts Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+    <title>Update Profile</title>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f4f7f6, #d6e6f2, #c9e0f2, #b7d5f2);
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            overflow: hidden;
+        }
+    
+        .profile-card {
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: white;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+    
+        .profile-card h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f3b65;
+            margin-bottom: 10px;
+        }
+    
+        .profile-icon img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+    
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+    
+        label {
+            font-weight: bold;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+    
+        input, select {
+            width: 100%;
+            padding: 8px;
+            font-size: 0.9rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+    
+        .form-group input:focus, .form-group select:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 4px rgba(41, 128, 185, 0.5);
+        }
+    
+        .button {
+            background-color: #2980b9;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 8px;
+            display: inline-block;
+        }
+    
+        .button:hover {
+            background-color: #2174a8;
+        }
+    
+        .button-cancel {
+            background-color: #6c757d;
+        }
+    
+        .button-cancel:hover {
+            background-color: #5a6268;
+        }
+    
+        /* Adjusted floating circle styles */
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            background: rgba(100, 150, 220, 0.3);
+            animation: float 10s ease-in-out infinite;
+        }
+        .circle1 { width: 120px; height: 120px; top: 10%; left: 20%; animation-duration: 12s; }
+        .circle2 { width: 150px; height: 150px; bottom: 15%; right: 25%; animation-duration: 15s; }
+        .circle3 { width: 80px; height: 80px; top: 50%; right: 10%; animation-duration: 10s; }
+        .circle4 { width: 100px; height: 100px; bottom: 25%; left: 15%; animation-duration: 18s; }
+    
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-15px) translateX(8px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+    </style>
+    
+</head>
+
+<body>
+
+    <div id="loader" class="loader">
+        <img src="{{ url_for('static', filename='images/Giffy-Loader.gif') }}" alt="Loading..." class="loader-gif">
+    </div>
+
+    <div class="floating-circle circle1"></div>
+    <div class="floating-circle circle2"></div>
+    <div class="floating-circle circle3"></div>
+    <div class="floating-circle circle4"></div>
+
+    <div class="profile-card">
+        <h1>Update Profile</h1>
+        <form action="{{ url_for('profile.update_profile') }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{ user_data.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" value="{{ user_data.dob }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="" disabled>Select Gender</option>
+                    <option value="Male" {% if user_data.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if user_data.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if user_data.gender == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="password">New Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter new password">
+            </div>
+
+            <div class="form-group">
+                <label for="profile_pic">Profile Picture:</label>
+                <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
+                
+            </div>
+
+            <button type="submit" class="button">Save Changes</button>
+            <a href="{{ url_for('profile.profile') }}" class="button button-cancel">Cancel</a>
+        </form>
+    </div>
+
+</body>
+
+</html>
